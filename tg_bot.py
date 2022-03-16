@@ -5,6 +5,7 @@ import telegram
 from google.cloud import dialogflow
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 from environs import Env
+from dialog_flow import answer_dialogflow
 
 
 logging.basicConfig(
@@ -20,16 +21,9 @@ def start(update, context):
 
 def detect_intent_texts(update, context):
     project_id = context.bot_data['project_id']
-    session_client = dialogflow.SessionsClient()
-    session = session_client.session_path(
-        project_id, session=update.message.chat_id,
-    )
-    text_input = dialogflow.TextInput(text=update.message.text, language_code='RU-ru')
-    query_input = dialogflow.QueryInput(text=text_input)
-    response = session_client.detect_intent(
-        request={"session": session, "query_input": query_input}
-    )
-    update.message.reply_text(response.query_result.fulfillment_text)
+    text = update.message.text
+    chat_id = update.message.chat_id
+    update.message.reply_text(answer_dialogflow(project_id, text, chat_id))
 
 
 def main():
