@@ -2,18 +2,20 @@ import vk_api as vk
 from vk_api.longpoll import VkLongPoll, VkEventType
 from vk_api.utils import get_random_id
 from environs import Env
-from dialog_flow import answer_dialogflow
+from dialog_flow import get_answer_dialogflow
 
 
 def send_message(event, vk_api, project_id):
+
     text = event.text
     chat_id = event.user_id
-    answer = answer_dialogflow(project_id, text, chat_id)
-    vk_api.messages.send(
-        user_id=event.user_id,
-        message=answer,
-        random_id=get_random_id()
-    )
+    answer = get_answer_dialogflow(project_id, text, chat_id)
+    if answer:
+        vk_api.messages.send(
+            user_id=event.user_id,
+            message=answer,
+            random_id=get_random_id()
+        )
 
 
 def main():
