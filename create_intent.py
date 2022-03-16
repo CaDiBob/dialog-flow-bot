@@ -30,7 +30,7 @@ def main():
     with open('questions.json', 'r')as file:
         questions = json.loads(file.read())
     env = Env()
-    env.read_env()
+    env.read_env('.env')
     project_id = env.str('PROJECT_ID')
     for intent_name, phrases in questions.items():
         training_phrases_parts = phrases['questions']
