@@ -23,7 +23,7 @@ class TelegramLogsHandler(logging.Handler):
 
 
 def start(update, context):
-    update.message.reply_text('Hello!')
+    update.message.reply_text('Здравствуйте! Чем можем помочь?')
 
 
 def send_message(update, context):
