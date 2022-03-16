@@ -11,6 +11,5 @@ def get_answer_dialogflow(project_id, text, chat_id):
     response = session_client.detect_intent(
         request={"session": session, "query_input": query_input}
     )
-    if response.query_result.intent.is_fallback:
-        return
-    return response.query_result.fulfillment_text
+    if not response.query_result.intent.is_fallback:
+        return response.query_result.fulfillment_text
