@@ -19,7 +19,7 @@ def start(update, context):
     update.message.reply_text('Hello!')
 
 
-def detect_intent_texts(update, context):
+def send_message(update, context):
     project_id = context.bot_data['project_id']
     text = update.message.text
     chat_id = update.message.chat_id
@@ -38,7 +38,7 @@ def main():
     dispatcher.bot_data['project_id'] = project_id
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(MessageHandler(
-        Filters.text & ~Filters.command, detect_intent_texts
+        Filters.text & ~Filters.command, send_message
     ))
     updater.start_polling()
     updater.idle()
