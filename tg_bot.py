@@ -32,8 +32,7 @@ def send_message(update, context):
         text = update.message.text
         chat_id = update.message.chat_id
         answer = get_answer_dialogflow(project_id, text, chat_id)
-        if answer:
-            update.message.reply_text(answer)
+        update.message.reply_text(answer.query_result.fulfillment_text)
     except telegram.error.BadRequest as error:
         logger.exception(error)
     except telegram.error.NetworkError as error:
