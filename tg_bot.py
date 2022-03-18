@@ -18,7 +18,7 @@ def start(update, context):
     update.message.reply_text('Здравствуйте! Чем можем помочь?')
 
 
-def send_message(update, context):
+def send_reply_message(update, context):
     project_id = context.bot_data['project_id']
     text = update.message.text
     chat_id = update.message.chat_id

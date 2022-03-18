@@ -2,10 +2,10 @@ import vk_api as vk
 from vk_api.longpoll import VkLongPoll, VkEventType
 from vk_api.utils import get_random_id
 from environs import Env
-from dialog_flow import get_answer_dialogflow, get_answer_for_vk
+from dialog_flow import get_answer_dialogflow
 
 
-def get_message(event, vk_api, project_id):
+def send_reply_message(event, vk_api, project_id):
     text = event.text
     chat_id = event.user_id
     answer = get_answer_dialogflow(project_id, text, chat_id)
@@ -28,7 +28,7 @@ def main():
     longpoll = VkLongPoll(vk_session)
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-            get_message(event, vk_api, project_id)
+            send_reply_message(event, vk_api, project_id)
 
 
 if __name__ == "__main__":
