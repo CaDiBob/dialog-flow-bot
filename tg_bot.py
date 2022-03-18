@@ -1,5 +1,6 @@
 import logging
-import time
+import sys
+import traceback
 
 import telegram
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
@@ -7,19 +8,10 @@ from environs import Env
 from dialog_flow import get_answer_dialogflow
 
 
-logger = logging.getLogger('bot')
-
-
-class TelegramLogsHandler(logging.Handler):
-
-    def __init__(self, tg_chat_id, bot):
-        super().__init__()
-        self.chat_id = tg_chat_id
-        self.tg_bot = bot
-
-    def emit(self, record):
-        log_entry = self.format(record)
-        self.tg_bot.send_message(chat_id=self.chat_id, text=log_entry)
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
+)
+logger = logging.getLogger(__name__)
 
 
 def start(update, context):
@@ -27,17 +19,20 @@ def start(update, context):
 
 
 def send_message(update, context):
-    try:
-        project_id = context.bot_data['project_id']
-        text = update.message.text
-        chat_id = update.message.chat_id
-        answer = get_answer_dialogflow(project_id, text, chat_id)
-        update.message.reply_text(answer.query_result.fulfillment_text)
-    except telegram.error.BadRequest as error:
-        logger.exception(error)
-    except telegram.error.NetworkError as error:
-        time.sleep(90)
-        logger.exception(error)
+    project_id = context.bot_data['project_id']
+    text = update.message.text
+    chat_id = update.message.chat_id
+    answer = get_answer_dialogflow(project_id, text, chat_id)
+    update.message.reply_text(answer.query_result.fulfillment_text)
+
+
+def error(update, context):
+    payload = list()
+    trace = "".join(traceback.format_tb(sys.exc_info()[2]))
+    chat_id = context.bot_data['tg_chat_id']
+    text = f'Ошибка {context.error} случилась{"".join(payload)}. ' \
+           f'Полная трассировка:\n\n{trace}'
+    context.bot.send_message(chat_id, text)
 
 
 def main():
@@ -48,14 +43,15 @@ def main():
     tg_chat_id = env('TG_CHAT_ID')
     updater = Updater(tg_token)
     bot = telegram.Bot(token=tg_token)
-    logger.addHandler(TelegramLogsHandler(tg_chat_id, bot))
-    logger.info('Бот запущен!')
     dispatcher = updater.dispatcher
     dispatcher.bot_data['project_id'] = project_id
+    dispatcher.bot_data['tg_chat_id'] = tg_chat_id
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(MessageHandler(
-        Filters.text & ~Filters.command, send_message
+        Filters.text & ~Filters.command, send_reply_message
     ))
+    dispatcher.add_error_handler(error)
+    logger.info('Бот запущен!')
     updater.start_polling()
     updater.idle()
 
