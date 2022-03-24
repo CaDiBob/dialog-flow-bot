@@ -37,7 +37,7 @@
 
 Пример файла .env:
 
-`TG_TOKEN= токен вашего телеграм бота` Можно получит у [@BotFather](https://way23.ru/%D1%80%D0%B5%D0%B3%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%86%D0%B8%D1%8F-%D0%B1%D0%BE%D1%82%D0%B0-%D0%B2-telegram.html)
+`TG_TOKEN= токен вашего телеграм бота` Можно получить у [@BotFather](https://way23.ru/%D1%80%D0%B5%D0%B3%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%86%D0%B8%D1%8F-%D0%B1%D0%BE%D1%82%D0%B0-%D0%B2-telegram.html)
 
 `GOOGLE_APPLICATION_CREDENTIALS=файла учетных данных google в формате json` [Инструкция по созданию json ключа](https://cloud.google.com/docs/authentication/getting-started)
 
